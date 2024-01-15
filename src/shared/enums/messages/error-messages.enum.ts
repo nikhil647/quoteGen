@@ -11,4 +11,5 @@ export enum ErrorMessages {
   UncaughtException = "Uncaught Exception thrown!",
   UnhandledRejection = "Unhandled Exception thrown!",
   SignUpFailDuplicateEmail = "The email address provided is already associated with an existing account. Please use a different email address or log in if this is your account.",
+  UserNotFound = "User Not Found",
 }

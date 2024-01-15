@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import { BadRequestException } from "../exceptions/http.exceptions";
 import {
   changePasswordValidationSchema,
+  createUserValidationSchema,
   createUserSignInValidationSchema,
   updateUserValidationSchema,
   getUserIdValidationSchema,

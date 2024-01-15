@@ -16,31 +16,6 @@ import { UserResponseDTO } from "../../shared/models/DTO/userDTO";
 import { IMongooseError } from "../../shared/models/extensions/errors.extension";
 const bcrypt = require("bcrypt");
 
-export const isEmailAndPasswordMatching = async (
-  userData: IUser,
-): Promise<UserResponseDTO> => {
-  const newUser = new UserModel();
-  newUser.username = userData.username;
-  newUser.email = userData.email;
-
-  const myPlaintextPassword = userData.password;
-  const hash = bcrypt.hashSync(myPlaintextPassword, 10);
-  newUser.password = hash;
-  const [error] = await to(newUser.save());
-  if (error && MongooseErrors.MongoServerError) {
-    const mongooseError = error as IMongooseError;
-    // check if there is a duplicate entry
-    if (mongooseError.code === MongooseErrorCodes.UniqueConstraintFail) {
-      throw new ConflictException(ErrorMessages.DuplicateEntryFail);
-    } else {
-      throw new InternalServerErrorException(ErrorMessages.CreateFail);
-    }
-  }
-
-  const userDTO = UserResponseDTO.toResponse(newUser);
-  return userDTO;
-};
-
 // POST /api/mongoose/users
 export const createNewUser = async (
   userData: IUser,
@@ -187,9 +162,15 @@ export const isEmailAndPasswordMatching = async (
   if (error) {
     throw new InternalServerErrorException(ErrorMessages.GetFail);
   }
-  // if (!user?.length) {
-  //   throw new InternalServerErrorException(ErrorMessages.UserNotFound);
-  // }
+  if (!user?.length) {
+    throw new InternalServerErrorException(ErrorMessages.UserNotFound);
+  }
+
+  console.log("user 00>", user);
+
+  // bcrypt.compare(password, user[0].password, function (err, result) {
+  //   // result == true
+  // });
 
   return true;
 };
