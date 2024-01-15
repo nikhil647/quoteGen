@@ -168,7 +168,13 @@ export const isEmailAndPasswordMatching = async (
     throw new InternalServerErrorException(ErrorMessages.UserNotFound);
   }
 
-  bcrypt.compare(password, user[0].password, function (err, result) {
+  console.log("user", user);
+  console.log("password", password);
+
+  bcrypt.compare(password, user[0].password, function (err: any, result: any) {
+    console.log("err -->", err);
+    console.log("result -->", result);
+
     return result == true;
   });
 
