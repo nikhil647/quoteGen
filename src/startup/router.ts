@@ -8,7 +8,7 @@ import { pageNotFoundExceptionHandler } from "../shared/middlewares/page-not-fou
 const routerSetup = (app: Express) =>
   app
     .get("/", async (req: Request, res: Response) => {
-      res.send("Hello Express APIvantage!");
+      res.send("Hello Express API");
     })
 
     // place interceptor above all routes that you want to intercept

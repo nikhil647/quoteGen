@@ -14,22 +14,47 @@ import {
 } from "../../shared/exceptions/http.exceptions";
 import { UserResponseDTO } from "../../shared/models/DTO/userDTO";
 import { IMongooseError } from "../../shared/models/extensions/errors.extension";
+const bcrypt = require("bcrypt");
 
-// POST /api/mongoose/users
-export const createNewUser = async (
-  userData: IUser
+export const isEmailAndPasswordMatching = async (
+  userData: IUser,
 ): Promise<UserResponseDTO> => {
   const newUser = new UserModel();
   newUser.username = userData.username;
   newUser.email = userData.email;
-  newUser.password = userData.password;
 
+  const myPlaintextPassword = userData.password;
+  const hash = bcrypt.hashSync(myPlaintextPassword, 10);
+  newUser.password = hash;
   const [error] = await to(newUser.save());
-
   if (error && MongooseErrors.MongoServerError) {
-    // this conversion is needed because Error class does not have code property
     const mongooseError = error as IMongooseError;
+    // check if there is a duplicate entry
+    if (mongooseError.code === MongooseErrorCodes.UniqueConstraintFail) {
+      throw new ConflictException(ErrorMessages.DuplicateEntryFail);
+    } else {
+      throw new InternalServerErrorException(ErrorMessages.CreateFail);
+    }
+  }
 
+  const userDTO = UserResponseDTO.toResponse(newUser);
+  return userDTO;
+};
+
+// POST /api/mongoose/users
+export const createNewUser = async (
+  userData: IUser,
+): Promise<UserResponseDTO> => {
+  const newUser = new UserModel();
+  newUser.username = userData.username;
+  newUser.email = userData.email;
+
+  const myPlaintextPassword = userData.password;
+  const hash = bcrypt.hashSync(myPlaintextPassword, 10);
+  newUser.password = hash;
+  const [error] = await to(newUser.save());
+  if (error && MongooseErrors.MongoServerError) {
+    const mongooseError = error as IMongooseError;
     // check if there is a duplicate entry
     if (mongooseError.code === MongooseErrorCodes.UniqueConstraintFail) {
       throw new ConflictException(ErrorMessages.DuplicateEntryFail);
@@ -60,7 +85,7 @@ export const retrieveUsers = async (): Promise<UserResponseDTO[]> => {
 
 // GET /api/mongoose/users/:id
 export const retrieveUserById = async (
-  id: string
+  id: string,
 ): Promise<UserResponseDTO> => {
   const [error, existingUser] = await to(UserModel.findById(id));
 
@@ -79,14 +104,14 @@ export const retrieveUserById = async (
 // PATCH /api/mongoose/users/:id
 export const updateUser = async (
   id: string,
-  userData: Partial<IUser>
+  userData: Partial<IUser>,
 ): Promise<UserResponseDTO> => {
   const [error, updatedUser] = await to(
     UserModel.findOneAndUpdate(
       { _id: id },
       { $set: { ...userData } },
-      { new: true }
-    )
+      { new: true },
+    ),
   );
 
   if (!updatedUser) {
@@ -104,14 +129,14 @@ export const updateUser = async (
 // PATCH /api/mongoose/users/change-password/:id
 export const updateUserPassword = async (
   id: string,
-  newPassword: string
+  newPassword: string,
 ): Promise<UserResponseDTO> => {
   const [error, updatedUser] = await to(
     UserModel.findOneAndUpdate(
       { _id: id },
       { $set: { password: newPassword } },
-      { new: true }
-    )
+      { new: true },
+    ),
   );
 
   if (!updatedUser) {
@@ -144,9 +169,6 @@ export const deleteUser = async (id: string): Promise<void> => {
 export const isUserEmaildPresent = async (email: string): Promise<boolean> => {
   const [error, users] = await to(UserModel.find({ email }));
 
-  console.log("error -->", error);
-  console.log("users -->", users);
-
   if (error) {
     throw new InternalServerErrorException(ErrorMessages.GetFail);
   }
@@ -154,5 +176,20 @@ export const isUserEmaildPresent = async (email: string): Promise<boolean> => {
   if (!users?.length) {
     return false;
   }
+  return true;
+};
+
+export const isEmailAndPasswordMatching = async (
+  email: string,
+  password: string,
+): Promise<boolean> => {
+  const [error, user] = await to(UserModel.find({ email }));
+  if (error) {
+    throw new InternalServerErrorException(ErrorMessages.GetFail);
+  }
+  if (!user?.length) {
+    throw new InternalServerErrorException(ErrorMessages.UserNotFound);
+  }
+
   return true;
 };

@@ -11,38 +11,35 @@
   "tasks": {
     "build": {
       "name": "build",
-      "command": "npm run build",
-      "runAtStart": false
+      "command": "npm run build"
     },
     "postinstall": {
       "name": "postinstall",
-      "command": "npm run postinstall",
-      "runAtStart": false
+      "command": "npm run postinstall"
     },
     "dev": {
       "name": "dev",
       "command": "npm run dev",
-      "runAtStart": true
+      "runAtStart": true,
+      "preview": {
+        "port": 5000
+      }
     },
     "prestart": {
       "name": "prestart",
-      "command": "npm run prestart",
-      "runAtStart": false
+      "command": "npm run prestart"
     },
     "start": {
       "name": "start",
-      "command": "npm run start",
-      "runAtStart": false
+      "command": "npm run start"
     },
     "lint": {
       "name": "lint",
-      "command": "npm run lint",
-      "runAtStart": false
+      "command": "npm run lint"
     },
     "lint-fix": {
       "name": "lint-fix",
-      "command": "npm run lint-fix",
-      "runAtStart": false
+      "command": "npm run lint-fix"
     }
   }
 }

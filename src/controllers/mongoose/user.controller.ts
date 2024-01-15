@@ -5,6 +5,7 @@ import { SuccessMessages } from "../../shared/enums/messages/success-messages.en
 import { ErrorMessages } from "../../shared/enums/messages/error-messages.enum";
 import {
   changePasswordValidator,
+  createUserSignInValidator,
   createUserValidator,
   getUserByIdValidator,
   updateUserValidator,
@@ -22,7 +23,7 @@ controller
     asyncHandler(async (req: Request, res: Response) => {
       const newUser = await userService.createNewUser(req.body);
       res.status(201).send(newUser);
-    })
+    }),
   )
 
   // GET /api/mongoose/users
@@ -31,7 +32,7 @@ controller
     asyncHandler(async (req: Request, res: Response) => {
       const users = await userService.retrieveUsers();
       res.send(users);
-    })
+    }),
   )
 
   // GET /api/mongoose/users/:id
@@ -41,7 +42,7 @@ controller
     asyncHandler(async (req: Request, res: Response) => {
       const existingUser = await userService.retrieveUserById(req.params.id);
       res.send(existingUser);
-    })
+    }),
   )
 
   // PATCH /api/mongoose/users/:id
@@ -52,7 +53,7 @@ controller
     asyncHandler(async (req: Request, res: Response) => {
       const updatedUser = await userService.updateUser(req.params.id, req.body);
       res.send(updatedUser);
-    })
+    }),
   )
 
   // PATCH /api/mongoose/users/change-password/:id
@@ -63,10 +64,10 @@ controller
     asyncHandler(async (req: Request, res: Response) => {
       const updatedUser = await userService.updateUserPassword(
         req.params.id,
-        req.body.new_password
+        req.body.new_password,
       );
       res.send(updatedUser);
-    })
+    }),
   )
 
   // DELETE /api/mongoose/users:id
@@ -76,7 +77,7 @@ controller
     asyncHandler(async (req: Request, res: Response) => {
       await userService.deleteUser(req.params.id);
       res.send({ message: SuccessMessages.UserRemoveSuccess });
-    })
+    }),
   )
 
   // /api/mongoose/users/signup
@@ -86,14 +87,18 @@ controller
     asyncHandler(async (req: Request, res: Response) => {
       // Check User email Id Present Or Not.
       const isPresent: boolean = await userService.isUserEmaildPresent(
-        req.body.email
+        req.body.email,
       );
+
       if (isPresent) {
         res.status(400).send(ErrorMessages.SignUpFailDuplicateEmail);
       }
+
       // If not create User
       const newUser = await userService.createNewUser(req.body);
+
       const token = jwt.sign({ id: newUser.id }, SECRET);
+
       res
         .cookie("access_token", token, {
           httpOnly: true,
@@ -101,6 +106,36 @@ controller
         })
         .status(201)
         .send(newUser);
-    })
+    }),
+  )
+
+  .post(
+    "/signin",
+    createUserValidator,
+    asyncHandler(async (req: Request, res: Response) => {
+      // Check User email Id Present Or Not.
+      const isPresent: boolean = await userService.isEmailAndPasswordMatching(
+        req.body.email,
+        req.body.password,
+      );
+
+      // if (isPresent) {
+      //   res.status(400).send(ErrorMessages.SignUpFailDuplicateEmail);
+      // }
+
+      // If not create User
+      const newUser = await userService.createNewUser(req.body);
+
+      const token = jwt.sign({ id: newUser.id }, SECRET);
+
+      res
+        .cookie("access_token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+        })
+        .status(201)
+        .send(newUser);
+    }),
   );
+
 export default controller;
