@@ -21,11 +21,15 @@ export const createUserValidationSchema = Joi.object({
       tlds: { allow: ["com", "net"] }, // allowed domains
     })
     .required(),
+  username: Joi.string().alphanum().min(3).max(30).required(),
+  repeat_password: Joi.string() /*.pattern(new RegExp('...'))*/
+    .required(),
 });
 
 // Update User is similar to Create User, but the fields are optional
 export const updateUserValidationSchema = Joi.object({
-  username: Joi.string().alphanum().min(3).max(30).optional(),
+  password: Joi.string() /*.pattern(new RegExp('...'))*/
+    .required(),
   email: Joi.string()
     .email({
       minDomainSegments: 2,

@@ -158,7 +158,9 @@ export const isEmailAndPasswordMatching = async (
   email: string,
   password: string,
 ): Promise<boolean> => {
+  console.log("email 00", email);
   const [error, user] = await to(UserModel.find({ email }));
+
   if (error) {
     throw new InternalServerErrorException(ErrorMessages.GetFail);
   }
@@ -166,11 +168,9 @@ export const isEmailAndPasswordMatching = async (
     throw new InternalServerErrorException(ErrorMessages.UserNotFound);
   }
 
-  console.log("user 00>", user);
-
-  // bcrypt.compare(password, user[0].password, function (err, result) {
-  //   // result == true
-  // });
+  bcrypt.compare(password, user[0].password, function (err, result) {
+    return result == true;
+  });
 
   return true;
 };

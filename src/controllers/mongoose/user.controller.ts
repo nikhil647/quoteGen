@@ -111,13 +111,15 @@ controller
 
   .post(
     "/signin",
-    createUserValidator,
+    createUserSignInValidator,
     asyncHandler(async (req: Request, res: Response) => {
       // Check User email Id Present Or Not.
       const isPresent: boolean = await userService.isEmailAndPasswordMatching(
         req.body.email,
         req.body.password,
       );
+
+      console.log('isPresent -->',isPresent);
 
       // if (isPresent) {
       //   res.status(400).send(ErrorMessages.SignUpFailDuplicateEmail);

@@ -27,7 +27,6 @@ export const createUserSignInValidator = asyncHandler(
 export const createUserValidator = asyncHandler(
   async (req: Request, _: Response, next: NextFunction) => {
     if (!req.body) throw new BadRequestException("Missing request body!");
-
     // the validateAsync method is built into Joi
     const [error] = await to(
       createUserValidationSchema.validateAsync(req.body),
