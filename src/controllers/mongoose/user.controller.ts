@@ -3,6 +3,7 @@ import asyncHandler from "express-async-handler";
 import * as userService from "../../services/user/user.service";
 import { SuccessMessages } from "../../shared/enums/messages/success-messages.enum";
 import { ErrorMessages } from "../../shared/enums/messages/error-messages.enum";
+import { IUser } from "../../databases/mongodb/model/user.model";
 import {
   changePasswordValidator,
   createUserSignInValidator,
@@ -114,21 +115,17 @@ controller
     createUserSignInValidator,
     asyncHandler(async (req: Request, res: Response) => {
       // Check User email Id Present Or Not.
-      const isPresent: boolean = await userService.isEmailAndPasswordMatching(
+      const user: {
+        password: string;
+        _id: string;
+        username: string;
+        email: string;
+      } = await userService.isEmailAndPasswordMatching(
         req.body.email,
         req.body.password,
       );
 
-      console.log('isPresent -->',isPresent);
-
-      // if (isPresent) {
-      //   res.status(400).send(ErrorMessages.SignUpFailDuplicateEmail);
-      // }
-
-      // If not create User
-      const newUser = await userService.createNewUser(req.body);
-
-      const token = jwt.sign({ id: newUser.id }, SECRET);
+      const token = jwt.sign({ id: user._id }, SECRET);
 
       res
         .cookie("access_token", token, {
@@ -136,7 +133,7 @@ controller
           secure: process.env.NODE_ENV === "production",
         })
         .status(201)
-        .send(newUser);
+        .send(user);
     }),
   );
 

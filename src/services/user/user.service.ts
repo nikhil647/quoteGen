@@ -157,9 +157,15 @@ export const isUserEmaildPresent = async (email: string): Promise<boolean> => {
 export const isEmailAndPasswordMatching = async (
   email: string,
   password: string,
-): Promise<boolean> => {
-  console.log("email 00", email);
-  const [error, user] = await to(UserModel.find({ email }));
+): Promise<{
+  password: string;
+  _id: string;
+  username: string;
+  email: string;
+}> => {
+  const [error, user] = await to(
+    UserModel.find({ email }).select("password _id username email"),
+  );
 
   if (error) {
     throw new InternalServerErrorException(ErrorMessages.GetFail);
@@ -167,16 +173,9 @@ export const isEmailAndPasswordMatching = async (
   if (!user?.length) {
     throw new InternalServerErrorException(ErrorMessages.UserNotFound);
   }
-
-  console.log("user", user);
-  console.log("password", password);
-
-  bcrypt.compare(password, user[0].password, function (err: any, result: any) {
-    console.log("err -->", err);
-    console.log("result -->", result);
-
-    return result == true;
-  });
-
-  return true;
+  const result = bcrypt.compareSync(password, user[0].password);
+  if (!result) {
+    throw new InternalServerErrorException(ErrorMessages.PasswordMismatchFail);
+  }
+  return user[0];
 };
