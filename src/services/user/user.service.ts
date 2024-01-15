@@ -187,9 +187,9 @@ export const isEmailAndPasswordMatching = async (
   if (error) {
     throw new InternalServerErrorException(ErrorMessages.GetFail);
   }
-  if (!user?.length) {
-    throw new InternalServerErrorException(ErrorMessages.UserNotFound);
-  }
+  // if (!user?.length) {
+  //   throw new InternalServerErrorException(ErrorMessages.UserNotFound);
+  // }
 
   return true;
 };
