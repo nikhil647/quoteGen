@@ -6,4 +6,5 @@ export enum SuccessMessages {
   GenericSuccess = "Operation completed successfully",
   UserRemoveSuccess = "User removed!",
   ProductRemoveSuccess = "Product removed!",
+  SignOutSuccess = "Sign out successful!",
 }

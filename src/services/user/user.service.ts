@@ -179,3 +179,9 @@ export const isEmailAndPasswordMatching = async (
   }
   return user[0];
 };
+
+export const forgotPassword = async (email: string) => {
+  const [error, user] = await to(
+    UserModel.find({ email }).select("password _id username email"),
+  );
+};

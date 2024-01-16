@@ -27,10 +27,33 @@ controller
     }),
   )
 
+  // /api/mongoose/users/isSignIn
+  .get(
+    "/is-sign-in",
+    asyncHandler(async (req: Request, res: Response) => {
+      const token = req.cookies.access_token;
+      const user = jwt.verify(token, SECRET);
+      if (!user) {
+        res.send(ErrorMessages.UserNotFound);
+      }
+      const oldUser = await userService.retrieveUserById(user.id);
+      res.send(oldUser);
+    }),
+  )
+  .get(
+    "/signout",
+    asyncHandler(async (req: Request, res: Response) => {
+      res
+        .clearCookie("access_token")
+        .status(200)
+        .send({ message: SuccessMessages.SignOutSuccess });
+    }),
+  )
   // GET /api/mongoose/users
   .get(
     "/",
     asyncHandler(async (req: Request, res: Response) => {
+      console.log("Cmaee????");
       const users = await userService.retrieveUsers();
       res.send(users);
     }),
@@ -41,6 +64,7 @@ controller
     "/:id",
     getUserByIdValidator,
     asyncHandler(async (req: Request, res: Response) => {
+      console.log("pathhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
       const existingUser = await userService.retrieveUserById(req.params.id);
       res.send(existingUser);
     }),
@@ -136,5 +160,13 @@ controller
         .send(user);
     }),
   );
+
+.post(
+  "/forgot-password",
+  asyncHandler(async (req: Request, res: Response) => {
+    const response = await userService.forgotPassword(req.body.email);
+    res.send(response);
+  })
+)
 
 export default controller;
