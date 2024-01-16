@@ -1,5 +1,6 @@
-import { Schema, model } from 'mongoose';
-import { IUser } from '../model/user.model';
+import { Schema, model } from "mongoose";
+import { IUser } from "../model/user.model";
+const crypto = require("crypto");
 
 const schema = new Schema<IUser>(
   {
@@ -18,10 +19,23 @@ const schema = new Schema<IUser>(
       required: true,
       select: false,
     },
+    resetPasswordToken: {
+      type: String,
+      required: false,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      required: false,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-export default model<IUser>('user', schema);
+schema.methods.generatePasswordReset = function () {
+  this.resetPasswordToken = crypto.randomBytes(20).toString("hex");
+  this.resetPasswordExpires = Date.now() + 3600000; //expires in an hour
+};
+
+export default model<IUser>("user", schema);

@@ -63,7 +63,6 @@ export const retrieveUserById = async (
   id: string,
 ): Promise<UserResponseDTO> => {
   const [error, existingUser] = await to(UserModel.findById(id));
-
   if (!existingUser) {
     throw new NotFoundException(`User with id: ${id} was not found!`);
   }
@@ -75,6 +74,14 @@ export const retrieveUserById = async (
   const userDTO = UserResponseDTO.toResponse(existingUser);
   return userDTO;
 };
+
+/*
+const user = new UserModel().findOne({ _id: id });
+  UserModel;
+
+  user.generatePasswordReset();
+  user.save();
+*/
 
 // PATCH /api/mongoose/users/:id
 export const updateUser = async (
@@ -181,7 +188,19 @@ export const isEmailAndPasswordMatching = async (
 };
 
 export const forgotPassword = async (email: string) => {
-  const [error, user] = await to(
-    UserModel.find({ email }).select("password _id username email"),
-  );
+  const user = UserModel.find({ email }).then(async (user) => {
+    user.generatePasswordReset();
+    await user.save();
+  });
+  console.log("user ", user);
+
+  // const [error, user] = await to(UserModel.find({ email }));
+  // if (error) {
+  //   throw new InternalServerErrorException(ErrorMessages.Generic);
+  // }
+  // if (!user) {
+  //   throw new InternalServerErrorException(ErrorMessages.UserNotFound);
+  // }
+  // user.generatePasswordReset();
+  // user.save();
 };

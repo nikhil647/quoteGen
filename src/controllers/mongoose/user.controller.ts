@@ -159,14 +159,14 @@ controller
         .status(201)
         .send(user);
     }),
-  );
+  )
 
-.post(
-  "/forgot-password",
-  asyncHandler(async (req: Request, res: Response) => {
-    const response = await userService.forgotPassword(req.body.email);
-    res.send(response);
-  })
-)
+  .post(
+    "/forgot-password",
+    asyncHandler(async (req: Request, res: Response) => {
+      const response = await userService.forgotPassword(req.body.email);
+      res.send(response);
+    }),
+  );
 
 export default controller;
