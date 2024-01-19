@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { IUser } from "../model/user.model";
 const crypto = require("crypto");
 
-const schema = new Schema<IUser>(
+const schema = new Schema(
   {
     username: {
       type: String,
@@ -32,6 +32,10 @@ const schema = new Schema<IUser>(
     timestamps: true,
   },
 );
+
+schema.methods.changedName = function () {
+  return this.username + "TROLOLO";
+};
 
 schema.methods.generatePasswordReset = function () {
   this.resetPasswordToken = crypto.randomBytes(20).toString("hex");

@@ -7,4 +7,5 @@ export enum SuccessMessages {
   UserRemoveSuccess = "User removed!",
   ProductRemoveSuccess = "Product removed!",
   SignOutSuccess = "Sign out successful!",
+  PasswordResetSent="Password reset email sent!"
 }

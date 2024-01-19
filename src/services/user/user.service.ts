@@ -14,6 +14,7 @@ import {
 } from "../../shared/exceptions/http.exceptions";
 import { UserResponseDTO } from "../../shared/models/DTO/userDTO";
 import { IMongooseError } from "../../shared/models/extensions/errors.extension";
+import { SuccessMessages } from "../../shared/enums/messages/success-messages.enum";
 const bcrypt = require("bcrypt");
 
 // POST /api/mongoose/users
@@ -188,19 +189,12 @@ export const isEmailAndPasswordMatching = async (
 };
 
 export const forgotPassword = async (email: string) => {
-  const user = UserModel.find({ email }).then(async (user) => {
-    user.generatePasswordReset();
-    await user.save();
-  });
-  console.log("user ", user);
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    throw new InternalServerErrorException(ErrorMessages.UserNotFound);
+  }
 
-  // const [error, user] = await to(UserModel.find({ email }));
-  // if (error) {
-  //   throw new InternalServerErrorException(ErrorMessages.Generic);
-  // }
-  // if (!user) {
-  //   throw new InternalServerErrorException(ErrorMessages.UserNotFound);
-  // }
-  // user.generatePasswordReset();
-  // user.save();
+  user.generatePasswordReset();
+  await user.save();
+  return SuccessMessages.PasswordResetSent;
 };
