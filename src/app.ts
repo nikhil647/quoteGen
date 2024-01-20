@@ -1,17 +1,17 @@
-import express from "express";
+import express from 'express';
 const app = express();
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 // Set up environment variables before loading the rest of the app
 dotenv.config();
 
-import appSetup from "./startup/init";
-import routerSetup from "./startup/router";
-import securitySetup from "./startup/security";
-import cronJobSetup from "./startup/cron";
+import appSetup from './startup/init';
+import routerSetup from './startup/router';
+import securitySetup from './startup/security';
+import cronJobSetup from './startup/cron';
 
-import { NodeProcessEvents } from "./shared/enums/events/node-process-events.enum";
-import { exceptionLogWrapper } from "./shared/helpers/exception-log-wrapper.helper";
-import { ErrorMessages } from "./shared/enums/messages/error-messages.enum";
+import { NodeProcessEvents } from './shared/enums/events/node-process-events.enum';
+import { exceptionLogWrapper } from './shared/helpers/exception-log-wrapper.helper';
+import { ErrorMessages } from './shared/enums/messages/error-messages.enum';
 
 process.on(NodeProcessEvents.UncaughtException, (error: unknown) => {
   exceptionLogWrapper(error, ErrorMessages.UncaughtException);
@@ -27,4 +27,3 @@ void appSetup(app);
 securitySetup(app, express);
 routerSetup(app);
 cronJobSetup();
-//import cron from 'node-cron';
