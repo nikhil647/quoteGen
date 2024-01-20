@@ -4,10 +4,12 @@ export class QuoteResponseDTO {
   quote!: string;
   author!: string;
   isPublished!: boolean;
-
+  id!: string;
+  
   static toResponse(quote: IQuotes): QuoteResponseDTO {
     const quoteDTO = new QuoteResponseDTO();
-    quoteDTO.quote = quote._id;
+    quoteDTO.id = quote._id.
+    quoteDTO.quote = quote.quote;
     quoteDTO.author = quote.author;
     quoteDTO.isPublished = quote.isPublished;
 
