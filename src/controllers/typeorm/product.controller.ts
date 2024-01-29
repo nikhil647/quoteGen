@@ -11,7 +11,6 @@ import * as productService from '../../services/product/product.service';
 const controller = Router();
 
 controller
-
   // POST /api/typeorm/product
   .post(
     '/',

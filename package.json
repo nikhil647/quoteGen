@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/Leka-Workshop/Express-APIvantage#readme",
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.499.0",
     "await-to-js": "^3.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
@@ -37,6 +38,7 @@
     "joi": "^17.9.2",
     "mongoose": "^7.4.4",
     "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.8",
     "pg": "^8.11.3",
     "typeorm": "^0.3.17",
     "winston": "^3.10.0",

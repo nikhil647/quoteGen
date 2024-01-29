@@ -74,7 +74,7 @@ controller
   .patch(
     "/:id",
     getUserByIdValidator,
-    updateUserValidator,
+    // updateUserValidator, Check User is logged in and modifying himself.
     asyncHandler(async (req: Request, res: Response) => {
       const updatedUser = await userService.updateUser(req.params.id, req.body);
       res.send(updatedUser);

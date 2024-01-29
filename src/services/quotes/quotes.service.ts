@@ -8,13 +8,6 @@ export const todaysQuote = async (): Promise<QuoteResponseDTO | undefined> => {
   if (count) {
     const randomIndex = Math.floor(Math.random() * count);
     const [error, randomQuote] = await to(quoteModel.findOne({ isPublished: false }).skip(randomIndex));
-    console.log(randomQuote);
-    // quoteModel.updateOne({
-    //   id: quoteModel._id
-    // })
-      // quoteModel.updateOne({
-      //   id:  
-      // });
     if (error || randomQuote === null) {
       return undefined;
     }

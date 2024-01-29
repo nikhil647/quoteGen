@@ -8,4 +8,5 @@ export interface IUser extends Document {
   resetPasswordExpires: Date;
   generatePasswordReset: () => void;
   changedName: () => void;
+  isSubscribed: boolean;
 }

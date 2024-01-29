@@ -1,5 +1,4 @@
 import to from "await-to-js";
-
 import { IUser } from "../../databases/mongodb/model/user.model";
 import UserModel from "../../databases/mongodb/schema/user.schema";
 import {
@@ -76,13 +75,14 @@ export const retrieveUserById = async (
   return userDTO;
 };
 
-/*
-const user = new UserModel().findOne({ _id: id });
-  UserModel;
-
-  user.generatePasswordReset();
-  user.save();
-*/
+export const retriveSubscriptionUsersEmail = async (): Promise<string[]> => {
+  const [error, userEmails] = await to(UserModel.find({ isSubscribed: true },'email'));
+  if (error) {
+    throw new InternalServerErrorException(ErrorMessages.GetFail);
+  }
+  const emails = userEmails.map((email) => email.email);
+  return emails;
+}
 
 // PATCH /api/mongoose/users/:id
 export const updateUser = async (

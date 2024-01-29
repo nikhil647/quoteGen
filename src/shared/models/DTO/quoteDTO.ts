@@ -1,3 +1,4 @@
+import { Console } from 'winston/lib/winston/transports';
 import { IQuotes } from '../../../databases/mongodb/model/quotes.model';
 
 export class QuoteResponseDTO {
@@ -6,13 +7,16 @@ export class QuoteResponseDTO {
   isPublished!: boolean;
   id!: string;
   
-  static toResponse(quote: IQuotes): QuoteResponseDTO {
+  static toResponse(quoteObj: IQuotes): QuoteResponseDTO {
     const quoteDTO = new QuoteResponseDTO();
-    quoteDTO.id = quote._id.
-    quoteDTO.quote = quote.quote;
-    quoteDTO.author = quote.author;
-    quoteDTO.isPublished = quote.isPublished;
-
+    try {
+      quoteDTO.quote = quoteObj.quote;
+      quoteDTO.author = quoteObj.author;
+      quoteDTO.isPublished = quoteObj.isPublished;
+    }
+    catch(err) {
+      console.log('Error -->',err);
+    }
     return quoteDTO;
   }
 }

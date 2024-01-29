@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { IUser } from "../model/user.model";
+import { boolean } from "joi";
 const crypto = require("crypto");
 
 const schema = new Schema(
@@ -27,15 +28,16 @@ const schema = new Schema(
       type: Date,
       required: false,
     },
+    isSubscribed: {
+      type: Boolean,
+      required: false,
+      default: false,
+    }
   },
   {
     timestamps: true,
   },
 );
-
-schema.methods.changedName = function () {
-  return this.username + "TROLOLO";
-};
 
 schema.methods.generatePasswordReset = function () {
   this.resetPasswordToken = crypto.randomBytes(20).toString("hex");
